@@ -1,0 +1,8 @@
+- wie wird ein Bild dargestellt? 
+
+- Wie funktioniert ein CNN?
+
+- Wie funktioniert Pooling?
+
+- Was ist Dropout und Batch Norm?
+- Was ist Flatten und Dense?
