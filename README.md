@@ -25,21 +25,21 @@ Lerne wie du Keras meisterst und schreibe dich JETZT ein!
 
 ## Der Kurs besteht aus folgenden Problemen
 
-👨‍💻 Entwickle ein Neuronales Netz das Preise vorhersagen kann
-👨‍💻 Entwickle ein Neuronales Netz das Alter und Geschlecht in Echtzeit (in Videos) vorhersagen kann
-👨‍💻 Entwickle ein Neuronales Netz das Aktienkurse vorhersagen kann
-👨‍💻 Entwickle ein Neuronales Netz das Hunde und Katzen vorhersagen kann
-👨‍💻 Entwickle ein Neuronales Netz das Ziffern vorhersagen kann
-👨‍💻 Entwickle ein Neuronales Netz das die Stimmung in Texte vorhersagen kann
-👨‍💻 Entwickle ein Neuronales Netz für Object Detection
-👨‍💻 Entwickle ein Neuronales Netz für Image Segmentation
-👨‍💻 Praktische Anwendung von Deep Learning Projekte im Berufsleben!
-👨‍💻 Das Komplexe Thema Deep Learning (Supervised Learning) verstehen
-👨‍💻 Von A-Z das beliebte Deep Learning Framework Keras mit TensorFlow lernen
-👨‍💻 Lerne wie du die Genauigkeit von Neuronale Netze erhöhen kannst
-👨‍💻 Lerne wie du Keras Modelle untersuchen und optimieren kannst
-👨‍💻 Lerne TensorBoard kennen
-👨‍💻 Lerne State-of-the-art Netzwerke kennen (R-CNN & Mask R-CNN)
+- 👨‍💻 Entwickle ein Neuronales Netz das Preise vorhersagen kann
+- 👨‍💻 Entwickle ein Neuronales Netz das Alter und Geschlecht in Echtzeit (in Videos) vorhersagen kann
+- 👨‍💻 Entwickle ein Neuronales Netz das Aktienkurse vorhersagen kann
+- 👨‍💻 Entwickle ein Neuronales Netz das Hunde und Katzen vorhersagen kann
+- 👨‍💻 Entwickle ein Neuronales Netz das Ziffern vorhersagen kann
+- 👨‍💻 Entwickle ein Neuronales Netz das die Stimmung in Texte vorhersagen kann
+- 👨‍💻 Entwickle ein Neuronales Netz für Object Detection
+- 👨‍💻 Entwickle ein Neuronales Netz für Image Segmentation
+- 👨‍💻 Praktische Anwendung von Deep Learning Projekte im Berufsleben!
+- 👨‍💻 Das Komplexe Thema Deep Learning (Supervised Learning) verstehen
+- 👨‍💻 Von A-Z das beliebte Deep Learning Framework Keras mit TensorFlow lernen
+- 👨‍💻 Lerne wie du die Genauigkeit von Neuronale Netze erhöhen kannst
+- 👨‍💻 Lerne wie du Keras Modelle untersuchen und optimieren kannst
+- 👨‍💻 Lerne TensorBoard kennen
+- 👨‍💻 Lerne State-of-the-art Netzwerke kennen (R-CNN & Mask R-CNN)
 
 
 ## Warum sollte man TensorFlow und Keras verwenden
