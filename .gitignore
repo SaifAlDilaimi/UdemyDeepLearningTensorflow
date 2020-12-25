@@ -43,3 +43,5 @@ nodeLanguageServer/**
 nodeLanguageServer.*/**
 **/.ipynb_checkpoints/**
 *.csv
+*.pptx
+*.docx
