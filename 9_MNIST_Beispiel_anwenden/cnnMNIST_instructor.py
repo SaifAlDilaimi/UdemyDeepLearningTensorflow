@@ -117,6 +117,7 @@ if __name__ == "__main__":
     print(x.mode)
 
     x = np.array(x, dtype=np.float32)
+    x -= 255
     x /= 255
     x = x.reshape(1, 28, 28, 1)
     print(x.shape)
