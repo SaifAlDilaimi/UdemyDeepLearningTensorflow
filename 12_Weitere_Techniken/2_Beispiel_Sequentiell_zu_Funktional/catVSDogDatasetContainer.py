@@ -152,7 +152,6 @@ class CATDOGDataset():
             batch_size=augment_size,
             shuffle=False
         ).next()[0]
-        '''
         for x_aug, x in zip(x_augmented[:5], self.x_train[rand_idxs][:5]):
             plt.subplot(121)
             plt.title('Augmented')
@@ -161,7 +160,6 @@ class CATDOGDataset():
             plt.title('Original')
             plt.imshow(x)
             plt.show()
-        '''
         # Append the augmented images to the train set
         self.x_train = np.concatenate((self.x_train, x_augmented))
         self.y_train = np.concatenate((self.y_train, y_augmented))

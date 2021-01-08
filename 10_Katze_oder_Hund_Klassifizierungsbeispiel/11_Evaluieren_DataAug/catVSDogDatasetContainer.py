@@ -3,10 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-
-from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from PIL import Image
@@ -138,7 +135,9 @@ class CATDOGDataset():
             rotation_range=25,
             zoom_range=0.2,
             width_shift_range=0.2,
-            height_shift_range=0.2
+            height_shift_range=0.2,
+            horizontal_flip=True,
+            vertical_flip=True
         )
         # Fit the data generator
         image_generator.fit(self.x_train, augment=True)
@@ -152,7 +151,6 @@ class CATDOGDataset():
             batch_size=augment_size,
             shuffle=False
         ).next()[0]
-        '''
         for x_aug, x in zip(x_augmented[:5], self.x_train[rand_idxs][:5]):
             plt.subplot(121)
             plt.title('Augmented')
@@ -161,7 +159,6 @@ class CATDOGDataset():
             plt.title('Original')
             plt.imshow(x)
             plt.show()
-        '''
         # Append the augmented images to the train set
         self.x_train = np.concatenate((self.x_train, x_augmented))
         self.y_train = np.concatenate((self.y_train, y_augmented))
