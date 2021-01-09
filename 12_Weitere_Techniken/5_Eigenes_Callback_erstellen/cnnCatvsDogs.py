@@ -15,7 +15,6 @@ from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import MaxPool2D
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.layers import GlobalAveragePooling2D
-from tensorflow.keras.layers import add
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import categorical_crossentropy
 from tensorflow.keras.callbacks import TensorBoard
@@ -27,7 +26,7 @@ from catVSDogDatasetContainer import CATDOGDataset
 
 from PIL import Image
 
-EPOCHS = 30
+EPOCHS = 5
 LEARNING_RATE = 0.0001
 
 LOGS_DIR = os.path.abspath("C:/Users/saifa/Desktop/UdemyDeepLearningTensorflow-main/logs")
@@ -49,9 +48,6 @@ def build_model(img_shape: Tuple[int, int, int], num_classes: int) -> Model:
     x = Activation("relu")(x)
     x = MaxPool2D()(x)
 
-    residual = Conv2D(filters=48, kernel_size=3, strides=2, padding="same")(x)
-    residual = BatchNormalization()(residual)
-
     x = Conv2D(filters=48, kernel_size=3, padding="same")(x)
     x = BatchNormalization()(x)
     x = Activation("relu")(x)
@@ -59,10 +55,6 @@ def build_model(img_shape: Tuple[int, int, int], num_classes: int) -> Model:
     x = BatchNormalization()(x)
     x = Activation("relu")(x)
     x = MaxPool2D()(x)
-    x = add([x, residual])
-
-    residual = Conv2D(filters=96, kernel_size=3, strides=2, padding="same")(x)
-    residual = BatchNormalization()(residual)
 
     x = Conv2D(filters=96, kernel_size=3, padding="same")(x)
     x = BatchNormalization()(x)
@@ -71,10 +63,6 @@ def build_model(img_shape: Tuple[int, int, int], num_classes: int) -> Model:
     x = BatchNormalization()(x)
     x = Activation("relu")(x)
     x = MaxPool2D()(x)
-    x = add([x, residual])
-
-    residual = Conv2D(filters=128, kernel_size=3, strides=2, padding="same")(x)
-    residual = BatchNormalization()(residual)
 
     x = Conv2D(filters=128, kernel_size=3, padding="same")(x)
     x = BatchNormalization()(x)
@@ -83,7 +71,6 @@ def build_model(img_shape: Tuple[int, int, int], num_classes: int) -> Model:
     x = BatchNormalization()(x)
     x = Activation("relu")(x)
     x = MaxPool2D()(x)
-    x = add([x, residual])
 
     x = Conv2D(filters=num_classes, kernel_size=3, padding="same")(x)
     x = BatchNormalization()(x)
@@ -126,7 +113,7 @@ def train(model_name: str, data: CATDOGDataset) -> None:
         log_dir=model_log_dir,
         histogram_freq=0,
         profile_batch=0,
-        write_graph=True
+        write_graph=False
     )
 
     mc_callback = ModelCheckpoint(
@@ -180,7 +167,7 @@ def evaluate(model_name: str, data: CATDOGDataset) -> None:
 if __name__ == "__main__":
     data = CATDOGDataset()
 
-    model_name = f"catvsdog_4block_FAPI_Residuals"
+    model_name = f"catvsdog_4block_FAPI"
 
     if not os.path.exists(os.path.join(MODELS_DIR, model_name)):
         train(model_name, data)

@@ -1,9 +1,9 @@
 # keras und numpy
-from keras.callbacks import Callback
+from tensorflow.keras.callbacks import Callback
 import numpy as np
 import pandas as pd
 
-class PriceDifference(Callback):
+class CatDogRatio(Callback):
     def __init__(self, bow_test_description, x_test_variety, x_test_embed, y_test_price):
         self.bow_test_description = bow_test_description
         self.x_test_variety = x_test_variety
