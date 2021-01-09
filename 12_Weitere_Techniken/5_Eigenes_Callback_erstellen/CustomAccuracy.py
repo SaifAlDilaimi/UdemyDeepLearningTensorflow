@@ -4,11 +4,8 @@ import numpy as np
 import pandas as pd
 
 class CatDogRatio(Callback):
-    def __init__(self, bow_test_description, x_test_variety, x_test_embed, y_test_price):
-        self.bow_test_description = bow_test_description
-        self.x_test_variety = x_test_variety
-        self.x_test_embed = x_test_embed
-        self.y_test_price = pd.np.array(y_test_price)
+    def __init__(self):
+        super().__init__()
 
     def on_epoch_end(self, epoch, logs={}):
         model = self.model
