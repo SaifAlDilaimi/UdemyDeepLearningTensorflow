@@ -95,7 +95,7 @@ def plot_predicted_images(y_pred: np.ndarray, test_dataset: tf.data.Dataset) -> 
         print(f'I am {prob:.2%} sure I am Class {high_prob_class}. The true class is {np.argmax(labels[i])}')
         plt.imshow(images[i])
         plt.show()
- 
+
 def lr_schedule(epoch):
     lrate = LEARNING_RATE
     if epoch > 75:
