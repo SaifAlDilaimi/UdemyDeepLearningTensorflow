@@ -12,20 +12,22 @@ from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import Activation
 from tensorflow.keras.layers import MaxPool2D
 from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import GlobalAveragePooling2D
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import add
+
+from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.losses import categorical_crossentropy
+
 from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import LearningRateScheduler
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
-from catVSDogDatasetContainer import CATDOGDataset
+from cifar10DatasetContainer import CIFAR10Dataset
 
-from PIL import Image
-
-EPOCHS = 5
-LEARNING_RATE = 0.0001
+EPOCHS = 125
+LEARNING_RATE = 0.001
 
 LOGS_DIR = os.path.abspath("C:/Users/saifa/Desktop/UdemyDeepLearningTensorflow-main/logs")
 if not os.path.exists(LOGS_DIR):
@@ -38,60 +40,71 @@ if not os.path.exists(MODELS_DIR):
 def build_model(img_shape: Tuple[int, int, int], num_classes: int) -> Model:
     inputL = Input(shape=img_shape)
 
-    x = Conv2D(filters=24, kernel_size=3, padding="same")(inputL)
+    x = Conv2D(filters=64, kernel_size=3, padding="same")(inputL)
     x = BatchNormalization()(x)
-    x = Activation("relu")(x)
-    x = Conv2D(filters=24, kernel_size=3, padding="same")(x)
+    x = Activation("elu")(x)
+    x = Conv2D(filters=64, kernel_size=3, padding="same")(x)
     x = BatchNormalization()(x)
-    x = Activation("relu")(x)
+    x = Activation("elu")(x)
     x = MaxPool2D()(x)
+    x = Dropout(0.2)(x)
 
-    x = Conv2D(filters=48, kernel_size=3, padding="same")(x)
-    x = BatchNormalization()(x)
-    x = Activation("relu")(x)
-    x = Conv2D(filters=48, kernel_size=3, padding="same")(x)
-    x = BatchNormalization()(x)
-    x = Activation("relu")(x)
-    x = MaxPool2D()(x)
-
-    x = Conv2D(filters=96, kernel_size=3, padding="same")(x)
-    x = BatchNormalization()(x)
-    x = Activation("relu")(x)
-    x = Conv2D(filters=96, kernel_size=3, padding="same")(x)
-    x = BatchNormalization()(x)
-    x = Activation("relu")(x)
-    x = MaxPool2D()(x)
+    residual = Conv2D(filters=128, kernel_size=3, strides=2, padding="same")(x)
+    residual = BatchNormalization()(residual)
 
     x = Conv2D(filters=128, kernel_size=3, padding="same")(x)
     x = BatchNormalization()(x)
-    x = Activation("relu")(x)
+    x = Activation("elu")(x)
     x = Conv2D(filters=128, kernel_size=3, padding="same")(x)
     x = BatchNormalization()(x)
-    x = Activation("relu")(x)
+    x = Activation("elu")(x)
     x = MaxPool2D()(x)
+    x = Dropout(0.3)(x)
+
+    x = add([x, residual])
+
+    residual = Conv2D(filters=256, kernel_size=3, strides=2, padding="same")(x)
+    residual = BatchNormalization()(residual)
+
+    x = Conv2D(filters=256, kernel_size=3, padding="same")(x)
+    x = BatchNormalization()(x)
+    x = Activation("elu")(x)
+    x = Conv2D(filters=256, kernel_size=3, padding="same")(x)
+    x = BatchNormalization()(x)
+    x = Activation("elu")(x)
+    x = MaxPool2D()(x)
+    x = Dropout(0.4)(x)
+
+    x = add([x, residual])
 
     x = Conv2D(filters=num_classes, kernel_size=3, padding="same")(x)
-    x = BatchNormalization()(x)
     x = GlobalAveragePooling2D()(x)
     prediction_layer = Activation("softmax")(x)
 
-    catdog_model = Model(inputs=[inputL], outputs=[prediction_layer])
-    catdog_model.summary()
+    cifar_model = Model(inputs=[inputL], outputs=[prediction_layer])
+    cifar_model.summary()
 
-    return catdog_model
+    return cifar_model
 
 def plot_predicted_images(y_pred: np.ndarray, test_dataset: tf.data.Dataset) -> None:
     batch = test_dataset.take(1)
-    images, _ = batch.as_numpy_iterator().next()
+    images, labels = batch.as_numpy_iterator().next()
     for i in range(10):
-        if y_pred[i][0] > 0.5:
-            print("I am {a:.2%} sure I am Cat".format(a=y_pred[i][0]))
-        else:
-            print("I am {a:.2%} sure I am Dog".format(a=(1-y_pred[i][0])))
+        high_prob_class = np.argmax(y_pred[i])
+        prob = y_pred[i][high_prob_class]
+        print(f'I am {prob:.2%} sure I am Class {high_prob_class}. The true class is {np.argmax(labels[i])}')
         plt.imshow(images[i])
         plt.show()
 
-def train(model_name: str, data: CATDOGDataset) -> None:
+def lr_schedule(epoch):
+    lrate = LEARNING_RATE
+    if epoch > 75:
+        lrate = 0.0005
+    if epoch > 100:
+        lrate = 0.0003
+    return lrate
+
+def train(model_name: str, data: CIFAR10Dataset) -> None:
     train_dataset = data.get_train_set()
     val_dataset = data.get_val_set()
 
@@ -99,7 +112,7 @@ def train(model_name: str, data: CATDOGDataset) -> None:
 
     model.compile(
         loss=categorical_crossentropy,
-        optimizer=Adam(learning_rate=LEARNING_RATE),
+        optimizer=RMSprop(learning_rate=LEARNING_RATE),
         metrics=["accuracy"]
     )
 
@@ -111,36 +124,31 @@ def train(model_name: str, data: CATDOGDataset) -> None:
         log_dir=model_log_dir,
         histogram_freq=0,
         profile_batch=0,
-        write_graph=False
+        write_graph=True
     )
 
     mc_callback = ModelCheckpoint(
         os.path.join(MODELS_DIR, model_name),
-        monitor='val_loss',
+        monitor='val_accuracy',
         mode='auto',
         save_best_only=True,
         save_weights_only=False,
         verbose=1
     )
 
-    es_callback = EarlyStopping(
-        monitor='val_loss', # auch val_accuracy probieren
-        mode='auto',
-        patience=5,
-        verbose=1
-    )
-
     reduce_lr_callback = ReduceLROnPlateau(
-        monitor='val_accuracy', # auch val_accuracy probieren
+        monitor='val_loss',
         mode='auto',
         factor=0.9,
-        patience=3,
+        patience=7,
         cooldown=0,
         min_lr=0,
         verbose=1
     )
 
-    history = model.fit(
+    lr_scheduler = LearningRateScheduler(lr_schedule)
+
+    model.fit(
         train_dataset,
         epochs=EPOCHS,
         batch_size=data.batch_size,
@@ -149,7 +157,7 @@ def train(model_name: str, data: CATDOGDataset) -> None:
         callbacks=[tb_callback, mc_callback, reduce_lr_callback]
     )
 
-def evaluate(model_name: str, data: CATDOGDataset) -> None:
+def evaluate(model_name: str, data: CIFAR10Dataset) -> None:
     model_path = os.path.join(MODELS_DIR, model_name)
 
     model = load_model(model_path)
@@ -163,9 +171,9 @@ def evaluate(model_name: str, data: CATDOGDataset) -> None:
     print(f'The Accuracy on the Test set is {score[1]:.2%} and the loss is {score[0]:.3f}')
 
 if __name__ == "__main__":
-    data = CATDOGDataset()
+    data = CIFAR10Dataset()
 
-    model_name = f"catvsdog_4block_FAPI"
+    model_name = f"cifar10_Residuals_RDLR_DR_zscore_256"
 
     if not os.path.exists(os.path.join(MODELS_DIR, model_name)):
         train(model_name, data)
